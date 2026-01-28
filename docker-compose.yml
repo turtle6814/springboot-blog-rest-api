@@ -1,0 +1,35 @@
+services:
+  db:
+    container_name: postgres-spring-boot-blog
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin123
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - db:/data/postgres
+    ports:
+      - "5332:5432"
+    networks:
+      - db
+    restart: unless-stopped
+
+  springboot-restful-blog-app:
+    container_name: springboot-restful-blog-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - db
+    depends_on:
+      - db
+    restart: on-failure
+
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:
